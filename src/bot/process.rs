@@ -122,18 +122,31 @@ async fn get_metaplex_metadata(
     const MAX_RETRIES: u8 = 5;
     let mut retries: u8 = 0;
     let data = loop {
-        match client.get_account_data(&pda).await {
-            Ok(v) => break Ok::<Vec<u8>, Box<dyn std::error::Error>>(v),
-            Err(e) if retries == MAX_RETRIES => return Err(e.into()),
-            Err(_) => tokio::time::sleep(tokio::time::Duration::from_millis(500)).await,
-        };
         retries += 1;
+        match client.get_account_with_commitment(&pda, CommitmentConfig::processed()).await {
+            Ok(v) => {
+                let data = match v.value {
+                    Some(v) => v.data,
+                    None => continue
+                };
+                break Ok(data) as Result<Vec<u8>, Box<dyn std::error::Error>>
+            },
+            Err(e) if retries > MAX_RETRIES => return Err(e.into()),
+            Err(_) => tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await,
+        };
     }?;
 
     let meta: MetadataAccount = MetadataAccount::safe_deserialize(&data)?;
 
-    parsed_tx.name = meta.name;
-    parsed_tx.symbol = meta.symbol;
+    parsed_tx.name = strip_nulls_owned(meta.name);
+    parsed_tx.symbol = strip_nulls_owned(meta.symbol);
 
     Ok(())
+}
+
+fn strip_nulls_owned(mut s: String) -> String {
+    if let Some(pos) = s.find('\0') {
+        s.truncate(pos);
+    }
+    s
 }

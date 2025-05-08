@@ -2093,7 +2093,6 @@ dependencies = [
 name = "pumpfun-scanner"
 version = "0.1.0"
 dependencies = [
- "bs58",
  "dotenvy",
  "env_logger",
  "futures",

@@ -58,16 +58,15 @@ mod tests {
     //     Ok(())
     // }
 
-    #[tokio::test]
-    async fn deserialize_metaplex() -> Result<(), Box<dyn std::error::Error>> {
-        dotenvy::dotenv()?;
-        env_logger::init();
-        let config = config::Config::init()
-            .await
-            .map_err(|e| format!("Failed to initialize config::Config\nCause: {e}"))?;
+    // #[tokio::test]
+    // async fn deserialize_metaplex() -> Result<(), Box<dyn std::error::Error>> {
+    //     dotenvy::dotenv()?;
+    //     env_logger::init();
+    //     let config = config::Config::init()
+    //         .await
+    //         .map_err(|e| format!("Failed to initialize config::Config\nCause: {e}"))?;
         
-        // bot::process::get_metaplex_metadata(&config.rpc_client, "FwPEKZEEtmidwX1ZK2EKErmPQduW5tc2zDgC6R2jpump").await?;
-
-        Ok(())
-    }
+    //     // bot::process::get_metaplex_metadata(&config.rpc_client, "FwPEKZEEtmidwX1ZK2EKErmPQduW5tc2zDgC6R2jpump").await?;
+    //     Ok(())
+    // }
 }
